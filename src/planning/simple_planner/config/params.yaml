@@ -1,7 +1,19 @@
 simple_planner:
   ros__parameters:
-    csv_path: ""              # Path to CSV file containing waypoints (expected format: x,y,v)
-    invert: false             # Invert the order of waypoints
-    frame_id: "map"           # Frame ID for the waypoints
-    publish_rate: 1.0         # Publish rate for the path messages
-    path_topic: "/pp_path"    # Topic to publish the planned path
+    planner_mode: "csv"                             # csv | min_curvature | harmonic_centerline
+    csv_path: "paths/berlin_optimal_raceline.csv"   # Validated Berlin raceline (x, y, v)
+    map_yaml_path: "maps/berlin.yaml"               # Official GIU Berlin map YAML
+    invert: false                                   # Reverse travel direction if true
+    closed_loop: true                               # Closed racing circuit check
+    validate_against_map: true                      # Enforce footprint + safety clearance
+    vehicle_width_m: 0.31                           # F1TENTH vehicle width [m]
+    safety_margin_m: 0.45                           # Extra lateral wall buffer [m]
+    waypoint_spacing_m: 0.20                        # Uniform arc-length step [m]
+    v_min: 1.8                                      # Minimum corner target speed [m/s]
+    v_max: 4.5                                      # Maximum straight target speed [m/s]
+    a_lat_max: 4.2                                  # Lateral grip budget [m/s^2]
+    speed_scale: 1.0                                # Global multiplier on speed profile
+    frame_id: "map"                                 # Coordinate frame ID
+    publish_rate: 2.0                               # Publishing rate [Hz]
+    path_topic: "/pp_path"                          # AROLA path topic
+    marker_topic: "/planned_path_marker"            # RViz Marker visualization topic
