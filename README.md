@@ -1,506 +1,152 @@
-# F1TENTH AROLA Architecture - Minimal Software Example
+# AME-RoboRacer-Project-YourStudentID
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![ROS2 Humble](https://img.shields.io/badge/ROS2-Humble-blue.svg)](https://docs.ros.org/en/humble/)
-[![CI/CD](https://img.shields.io/badge/CI%2FCD-passing-brightgreen.svg)](https://github.com/GIU-F1Tenth/minimal_sofware_example/actions)
+**Autonomous Path Planning, Pure Pursuit Tracking Control & Closed-Loop Simulation on the Official GIU Berlin Track**
 
-## Table of Contents
-
-- [Overview](#overview)
-- [AROLA Layered Architecture](#arola-layered-architecture)
-  - [Layer Descriptions](#layer-descriptions)
-- [Repository Structure](#repository-structure)
-- [AROLA Components](#arola-components)
-  - [Sensor Layer Components](#sensor-layer-components)
-  - [Preprocessing Layer Components](#preprocessing-layer-components)
-  - [Perception Layer Components](#perception-layer-components)
-  - [Mapping & Localization Layer Components](#mapping--localization-layer-components)
-  - [Planning Layer Components](#planning-layer-components)
-  - [Behavior Layer Components](#behavior-layer-components)
-  - [Control Layer Components](#control-layer-components)
-  - [Actuator Layer Components](#actuator-layer-components)
-- [AROLA Architecture Benefits](#arola-architecture-benefits)
-- [Quick Start Guide](#quick-start-guide)
-  - [Prerequisites](#prerequisites)
-  - [1. Install dependencies](#1-install-dependencies)
-  - [2. Build the AROLA System](#2-build-the-arola-system)
-  - [3. Launch the AROLA System](#3-launch-the-arola-system)
-- [AROLA Configuration Philosophy](#arola-configuration-philosophy)
-  - [Configuration Layer Mapping](#configuration-layer-mapping)
-- [CSV Waypoint Format](#csv-waypoint-format)
-- [AROLA Startup Sequence](#arola-startup-sequence)
-- [AROLA Development & Debugging](#arola-development--debugging)
-  - [Layer-by-Layer Debugging](#layer-by-layer-debugging)
-  - [AROLA System Status Commands](#arola-system-status-commands)
-  - [Common AROLA Issues & Solutions](#common-arola-issues--solutions)
-- [AROLA Dependencies](#arola-dependencies)
-  - [Core Dependencies](#core-dependencies)
-  - [Layer-Specific Dependencies](#layer-specific-dependencies)
-- [Getting Involved](#getting-involved)
-  - [Contributing to AROLA](#contributing-to-arola)
-  - [Development Guidelines](#development-guidelines)
-- [Community & Support](#community--support)
-- [License](#license)
-- [About F1TENTH AROLA](#about-f1tenth-arola)
-
-## Overview
-
-The **F1TENTH AROLA (Autonomous Racing Open Layered Architecture)** represents a revolutionary layered software framework designed for building scaled autonomous vehicles. This minimal software example demonstrates the complete autonomous racing stack using our modular, scalable architecture.
-
-AROLA Architecture provides separation of concerns through distinct layers, enabling rapid development, testing, and deployment of autonomous vehicle systems at any scale - from 1/10th scale racing cars to full-size autonomous vehicles.
-
-## AROLA Layered Architecture
-
-Our architecture follows a hierarchical design with clear separation between different system responsibilities:
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        SENSOR LAYER                         │
-│               (Sensor drivers & Data collection)            │
-├─────────────────────────────────────────────────────────────┤
-│                     PREPROCESSING LAYER                     │
-│                (Data manipulation & altering)               │
-├─────────────────────────────────────────────────────────────┤
-│                     PERCEPTION LAYER                        │
-│                (Object detection & perception)              │
-├─────────────────────────────────────────────────────────────┤
-│               MAPPING & LOCALIZATION LAYER                  │
-│             (Perception & State Estimation)                 │
-├─────────────────────────────────────────────────────────────┤
-│                    PLANNING LAYER                           │
-│               (Path Planning & Navigation)                  │
-├─────────────────────────────────────────────────────────────┤
-│                     BEHAVIOR LAYER                          │
-│                (Complex Thinking & Behavior)                |
-├─────────────────────────────────────────────────────────────┤
-│                    CONTROL LAYER                            │
-│                (Vehicle Control System)                     │
-├─────────────────────────────────────────────────────────────┤
-│                    ACTUATOR LAYER                           │
-│                   (Physical layer)                          │
-└─────────────────────────────────────────────────────────────┘
-```
-
-### Layer Descriptions
-
-- **Sensor Layer**: Raw sensor data collection and hardware interface management
-- **Preprocessing Layer**: Data filtering, transformation, and preparation for higher-level processing
-- **Perception Layer**: Object detection, classification, and environmental understanding
-- **Mapping & Localization Layer**: Simultaneous localization and mapping (SLAM) and state estimation
-- **Planning Layer**: Path planning algorithms, route optimization, and navigation strategy
-- **Behavior Layer**: High-level decision making, racing strategy, and complex autonomous behaviors
-- **Control Layer**: Low-level vehicle control algorithms and trajectory following
-- **Actuator Layer**: Physical hardware control and motor/servo command execution
-
-## Repository Structure
-
-```
-minimal_software_example/
-├── src/
-│   ├── core/                    # CORE LAYER
-│   │   ├── launch/             # System orchestration and launch files
-│   │   └── config/             # Centralized configuration management
-│   │
-│   ├── control/                # CONTROL LAYER
-│   │   └── pure_pursuit/       # Trajectory following controller
-│   │       ├── launch/
-│   │       ├── config/
-│   │       └── pure_pursuit/
-│   │
-│   ├── planning/               # PLANNING LAYER
-│   │   └── simple_planner/    # Waypoint-based path planning
-│   │       ├── config/
-│   │       └── simple_planner/
-│   │
-│   ├── drivers/                # DRIVERS LAYER
-│   │   └── urg_node2/         # LiDAR driver for Hokuyo sensors
-│   │       ├── launch/
-│   │       ├── config/
-│   │       └── src/
-│   │
-│   └── watchdog/               # WATCHDOG LAYER
-│       └── watchdog/          # System health monitoring
-│           ├── launch/
-│           ├── config/
-│           └── watchdog/
-│
-├── LICENSE
-└── README.md
-```
-
-## AROLA Components
-
-### Sensor Layer Components
-- **URG Node2 LiDAR Driver**
-  - Package: `urg_node2` 
-  - Function: Hardware abstraction for Hokuyo LiDAR sensors
-  - Key Topics: Publishes `/scan`
-  - Configuration: IP address, port, and scan frequency settings
-
-### Preprocessing Layer Components
-- **Data Filtering & Transformation**
-  - Function: Raw sensor data filtering, noise reduction, and format standardization
-  - Integration: Embedded within Nav2 sensor processing pipeline
-
-### Perception Layer Components
-- **Environmental Understanding**
-  - Function: Object detection, classification, and environmental perception
-  - Integration: Built into Nav2 costmap and obstacle detection systems
-
-### Mapping & Localization Layer Components
-- **Nav2 AMCL Localization**
-  - Package: `nav2_amcl`
-  - Function: Adaptive Monte Carlo Localization with particle filtering
-  - Key Topics: Subscribes to `/scan`, `/tf`; Publishes `/tf`, `/pose`
-- **Nav2 Ecosystem**: Complete navigation framework with 25+ specialized packages
-
-### Planning Layer Components
-- **Simple Planner**
-  - Package: `simple_planner`
-  - Function: CSV-based waypoint path planning and publishing
-  - Key Topics: Publishes `/pp_path`
-  - Configuration: Waypoint file path and publishing rate
-
-### Behavior Layer Components
-- **Racing Strategy & Decision Making**
-  - Function: High-level autonomous behaviors and racing strategy
-  - Integration: Embedded within control and planning layer decision logic
-
-### Control Layer Components
-- **Pure Pursuit Controller**
-  - Package: `pure_pursuit`
-  - Function: Trajectory following and velocity control
-  - Key Topics: Subscribes to `/pp_path`, `/odom`; Publishes `/drive`
-  - Configuration: Lookahead distance, maximum velocity, and control frequency
-
-### Actuator Layer Components
-- **Drive Command Interface**
-  - Function: Physical hardware control and motor/servo command execution
-  - Key Topics: Receives `/drive` commands for steering and throttle control 
-## AROLA Architecture Benefits
-
-### 🎯 **Modularity & Scalability**
-- Each layer operates independently with well-defined interfaces
-- Easy to swap components without affecting other layers
-- Scales from 1/10th models to full-size vehicles
-
-### 🔧 **Rapid Development**
-- Clear separation of concerns accelerates development
-- Parallel development across different layers
-- Standardized interfaces reduce integration complexity
-
-### 🛡️ **Built-in Safety**
-- Dedicated watchdog layer monitors all system components
-- Fail-safe mechanisms at every layer
-- Real-time health monitoring and alerting
-
-### 📈 **Production Ready**
-- Battle-tested components from Nav2 ecosystem
-- Proven in competitive F1TENTH racing environments
-- Enterprise-grade software practices
-
-## Quick Start Guide
-
-### Prerequisites
-- ROS 2 Humble or later
-- Ubuntu 22.04 (recommended)
-- Python 3.8 or higher
-- Colcon build tools
-- Docker 
-
-### 1. Install dependencies
-
-If you do not have them already installed, install the dependencies with:
-```bash
-sudo apt install \
-  ros-humble-gazebo-ros-pkgs \
-  libnanoflann-dev \
-  ros-humble-ompl \
-  libceres-dev \
-  libxtensor-dev \
-  ros-humble-behaviortree-cpp-v3 \
-  ros-humble-test-msgs \
-  ros-humble-laser-proc \
-  ros-humble-diagnostic-updater \
-  ros-humble-bondcpp \
-  ros-humble-navigation2 \
-  ros-humble-nav2-bringup \
-  ros-humble-ackermann-msgs \
-  ros-humble-tf-transformations
-
-pip install -r requirements.txt
-```
-
-If you wish to run the stack on the actual RoboRacer vehicle, additionally run
-```bash
-sudo apt install ros-humble-urg-node
-```
-
-### 2. Build the AROLA System
-```bash
-# Clone the repository
-git clone https://github.com/GIU-F1Tenth/minimal_sofware_example.git
-cd minimal_software_example
-
-# Update submodules 
-git submodule update --init --recursive
-
-# Build all AROLA layers
-colcon build
-
-# Source the workspace
-source install/setup.bash
-```
-
-### 3. Launch the AROLA System
-
-For the actual vehicle, run:
-```bash
-ros2 launch core core.launch.py
-```
-
-For the simulation, run: 
-```bash
-# Launch the complete AROLA stack
-ros2 launch core simulation.core.launch.py
-```
-
-Additionally, to open the simulation:
-```bash 
-cd f1tenth_gym_ros
-sudo docker compose up -d
-docker exec -it f1tenth_gym_ros-sim-1 /bin/bash
-```
-
-Inside the simulation terminal, run:
-```bash
-source /opt/ros/foxy/setup.bash
-source install/local_setup.bash
-ros2 launch f1tenth_gym_ros gym_bridge_launch.py
-```
-
-The simulation will appear at http://localhost:8080/vnc.html
-
-## AROLA Configuration Philosophy
-
-The AROLA architecture employs **centralized configuration management** through `src/core/config/params.yaml`, eliminating configuration sprawl and ensuring consistency across all layers.
-
-### Configuration Layer Mapping
-
-```yaml
-# CORE LAYER - System-wide settings
-core:
-  use_sim_time: false
-  robot_base_frame: "base_link"
-  global_frame: "map"
-
-# CONTROL LAYER - Motion control parameters
-pure_pursuit:
-  lookahead_distance: 1.5
-  velocity_max: 3.0
-  control_frequency: 20.0
-
-# LOCALIZATION LAYER - AMCL and perception
-nav2_amcl:
-  max_particles: 2000
-  min_particles: 500
-  recovery_alpha_slow: 0.001
-  recovery_alpha_fast: 0.1
-
-# PLANNING LAYER - Path planning configuration
-simple_planner:
-  csv_path: "/path/to/waypoints.csv"
-  frame_id: "map"
-  publish_rate: 10.0
-
-# DRIVERS LAYER - Hardware interfaces
-urg_node2:
-  ip_address: "192.168.1.10"
-  port: 10940
-  frame_id: "laser"
-  scan_frequency: 40.0
-
-# WATCHDOG LAYER - Safety monitoring
-watchdog:
-  monitor_frequency: 10.0
-  timeout_threshold: 2.0
-  critical_topics: ["/scan", "/odom", "/drive"]
-```
-
-## CSV Waypoint Format
-
-The simple planner expects CSV files with the following format:
-```
-x,y,v
-1.0,0.0,2.5
-2.0,1.0,3.0
-3.0,2.0,2.8
-...
-```
-
-Where:
-- `x`: X coordinate in map frame (meters)
-- `y`: Y coordinate in map frame (meters)  
-- `v`: Desired velocity at waypoint (m/s)
-
-## AROLA Startup Sequence
-
-The AROLA architecture follows a carefully orchestrated startup sequence to ensure proper system initialization:
-
-```
-1. DRIVERS LAYER     → Hardware initialization and sensor startup
-   └── URG Node2     → LiDAR driver establishes sensor foundation
-
-2. LOCALIZATION LAYER → Perception and state estimation
-   └── Nav2 AMCL     → Particle filter localization initialization
-
-3. PLANNING LAYER    → Path planning and navigation
-   └── Simple Planner → Waypoint loading and path publishing
-
-4. CONTROL LAYER     → Motion control and trajectory following
-   └── Pure Pursuit  → Controller activation for vehicle motion
-
-5. WATCHDOG          → Safety monitoring (started last)
-   └── System Monitor → Comprehensive health monitoring activation
-```
-
-This startup sequence ensures that:
-- Hardware interfaces are established before dependent systems
-- Localization is available before path planning
-- All core systems are operational before safety monitoring begins
-- Each layer can gracefully handle dependencies on lower layers
-
-## AROLA Development & Debugging
-
-### Layer-by-Layer Debugging
-
-#### **Drivers Layer Debugging**
-```bash
-# Check LiDAR connectivity and data
-ros2 topic echo /scan
-ros2 topic hz /scan
-ros2 run tf2_tools view_frames.py
-```
-
-#### **Localization Layer Debugging**
-```bash
-# Monitor AMCL performance
-ros2 topic echo /amcl_pose
-ros2 topic echo /particlecloud
-rviz2  # Visualize particle filter and pose estimates
-```
-
-#### **Planning Layer Debugging**
-```bash
-# Verify path planning output
-ros2 topic echo /pp_path
-ros2 topic hz /pp_path
-# Check waypoint file format and accessibility
-```
-
-#### **Control Layer Debugging**
-```bash
-# Monitor control commands and odometry
-ros2 topic echo /drive
-ros2 topic echo /odom
-# Verify trajectory following performance
-```
-
-### AROLA System Status Commands
-
-```bash
-# Overall system health check
-ros2 node list | grep -E "(pure_pursuit|amcl|simple_planner|urg_node|watchdog)"
-
-# Topic activity monitoring
-ros2 topic list | head -20
-ros2 topic hz /scan /odom /pp_path /drive
-
-# Transform tree verification (critical for multi-layer coordination)
-ros2 run tf2_tools view_frames.py
-ros2 run tf2_ros tf2_echo map base_link
-
-# Real-time system performance
-ros2 topic bw /scan  # Bandwidth monitoring
-top | grep -E "(pure_pursuit|amcl|simple_planner)"  # CPU usage
-```
-
-### Common AROLA Issues & Solutions
-
-| Layer | Issue | Solution |
-|-------|-------|----------|
-| **Drivers** | LiDAR not connecting | Verify IP in params.yaml, check network connectivity |
-| **Localization** | AMCL not localizing | Check map loading, set initial pose, verify scan data |
-| **Planning** | No path output | Verify CSV file path/format in centralized config |
-| **Control** | Poor trajectory following | Tune lookahead distance and velocity parameters |
-| **Watchdog** | False alarms | Adjust timeout thresholds in watchdog configuration |
-
-## AROLA Dependencies
-
-### Core Dependencies
-- **ROS 2 Humble** or later (Ubuntu 22.04 recommended)
-- **Nav2 Navigation Stack** (complete ecosystem)
-- **TF2** for coordinate frame management
-- **Colcon** build system
-
-### Layer-Specific Dependencies
-
-#### Drivers Layer
-- `urg_node2` - Hokuyo LiDAR driver
-- Hardware-specific sensor drivers
-
-#### Localization Layer  
-- `nav2_amcl` - Adaptive Monte Carlo Localization
-- `nav2_costmap_2d` - Costmap management
-- `nav2_lifecycle_manager` - Node lifecycle management
-
-#### Control Layer
-- Custom `pure_pursuit` package
-- `geometry_msgs` - ROS message types
-- `nav_msgs` - Navigation message types
-
-#### Planning Layer
-- Custom `simple_planner` package
-- CSV file parsing libraries
-
-#### Watchdog Layer
-- Custom `watchdog` package
-- System monitoring utilities
-
-## Getting Involved
-
-### Contributing to AROLA
-We welcome contributions to the F1TENTH AROLA Architecture:
-
-1. **Fork** the repository
-2. **Create** a feature branch following layer conventions
-3. **Implement** your changes with proper layer isolation
-4. **Test** across all affected layers
-5. **Submit** a pull request with detailed layer impact analysis
-
-### Development Guidelines
-- Follow the layered architecture principles
-- Maintain clear interfaces between layers
-- Update centralized configuration appropriately
-- Include comprehensive testing for safety-critical components
-
-## Community & Support
-
-- **Documentation**: [F1TENTH AROLA Architecture Docs](https://docs.f1tenth.org/arola)
-- **Community Forum**: [F1TENTH Discourse](https://discourse.f1tenth.org)
-- **GitHub Issues**: Report bugs and request features
-- **Workshops**: Regular AROLA architecture training sessions
-
-## License
-
-**MIT License** - Open source software enabling innovation in autonomous vehicle research and education.
-
-See individual package LICENSE files for component-specific licensing details.
+- **Competition / Course:** AME RoboRacer (F1TENTH) Competition — German International University (GIU) Berlin, Winter Semester 2026
+- **Author:** `YourName` | **Student ID:** `YourStudentID`
+- **Mandatory Starter Baseline:** [`GIU-F1Tenth/minimal_sofware_example`](https://github.com/GIU-F1Tenth/minimal_sofware_example) (`commit 4239040`, AROLA Architecture — see [`UPSTREAM_ATTRIBUTION.md`](UPSTREAM_ATTRIBUTION.md))
+- **Scope:** Full ROS 2 software stack, automated test suite, and genuine closed-loop multi-lap simulation on the official `600 x 600` GIU Berlin occupancy grid (`f110_gym` single-track RK4 physics + 1080-beam 2D LiDAR). Physical chassis assembly and physical vehicle track testing are out of scope (hardware-transfer configuration and considerations are provided in `src/core/config/hardware.params.yaml` and Section 7 of [`docs/FINAL_REPORT.md`](docs/FINAL_REPORT.md)).
 
 ---
 
-## About F1TENTH AROLA
+## Key Verified Results Summary
 
-The **Autonomous Racing Open Layered Architecture (AROLA)** represents the next generation of modular, scalable software frameworks for autonomous vehicles. Born from competitive F1TENTH racing environments, AROLA enables rapid development and deployment of autonomous systems from research prototypes to production vehicles.
+| Metric / Deliverable | Unmodified Upstream Baseline (`4239040`) | Completed Project (`AME-RoboRacer-Project-YourStudentID`) |
+| :--- | :--- | :--- |
+| **`colcon build` (6 packages)** | `6 / 6` built (`3.37 s`) | **`6 / 6` built cleanly (`3.38 s`)** |
+| **`colcon test` & `pytest`** | `4 failed` packages, `12 errors`, `0` functional tests | **`30 / 30 passed`, `0 errors`, `0 failures`, `0 skipped`** |
+| **Strict PEP 8 (`flake8`, 79 cols)** | `122` style/lint violations | **`0` warnings / `0` errors across all packages & tools** |
+| **Berlin Map Loading (`600 x 600`)** | Broken (`1-bit PNG` -> 100% solid wall collision) | **Triple-verified `8-bit` map (`269.885 m^2` free, `0` collisions)** |
+| **5-Lap Closed-Loop Completion** | Fails to drive headlessly / TF conflicts | **`5 / 5` laps across Conservative, Balanced & Fast-Race (`0` collisions)** |
+| **Best Flying Lap Time (Berlin)** | N/A | **`16.176 s`** (`berlin_race.yaml`) / **`14.976 s`** (`Tune-UltraAggr`) |
+| **Cross-Track Error (CTE RMSE)** | N/A | **`4.84 cm`** (`Conservative`), **`7.89 cm`** (`Balanced`), **`9.23 cm`** (`Fast-Race`) |
+| **Perturbed Spawn Reliability** | N/A | **`15 / 15` (`100.0%`) zero-collision completion across random pose offsets** |
 
-**Building the future of autonomous racing, one layer at a time.**
+![GIU Berlin Clearance Field and Driven Speed Profile](results/plots/berlin_map_and_paths.png)
+
+---
+
+## Repository Structure
+
+```text
+AME-RoboRacer-Project-YourStudentID/
+├── src/
+│   ├── core/                         # Central YAML profiles, single-owner TF node & full launch files
+│   │   ├── config/
+│   │   │   ├── berlin_conservative.yaml  # Safe baseline profile (40.70 s/lap, 4.84 cm CTE RMSE)
+│   │   │   ├── params.yaml               # Default balanced profile (21.41 s/lap, 7.89 cm CTE RMSE)
+│   │   │   ├── berlin_race.yaml          # Tuned fast race profile (16.18 s/lap, 9.23 cm CTE RMSE)
+│   │   │   └── hardware.params.yaml      # Physical RoboRacer / VESC hardware transfer profile
+│   │   └── launch/
+│   │       ├── berlin_full_sim.launch.py # One-command GIU Berlin full-stack simulation launch
+│   │       ├── simulation.core.launch.py # AROLA core simulation stack launch
+│   │       └── core.launch.py            # Physical robot AROLA core launch
+│   ├── planning/simple_planner/      # Occupancy-grid EDT validator, harmonic/min-curv planner & 4 Berlin CSVs
+│   ├── control/pure_pursuit/         # Exact Ackermann Pure Pursuit, preview speed control & fail-safes
+│   ├── watchdog/watchdog/            # Periodic /scan & /ego_racecar/odom health monitor -> /pause stop
+│   └── monitor/race_monitor/         # Berlin finish-line lap timer + EVO PosePath3D APE/RPE analyzer
+├── f1tenth_gym_ros/                  # F1TENTH OpenAI Gym ROS 2 bridge, 8-bit Berlin map & Dockerfile.humble
+├── tools/
+│   ├── ros2_sim_harness/             # Deterministic in-process ROS 2 shim when /opt/ros/humble is absent
+│   └── run_berlin_simulation.py      # Reproducible closed-loop benchmark, tuning, rosbag2 & plot runner
+├── results/                          # Genuine closed-loop CSV telemetry, JSON summary, .db3 bag & PNG plots
+├── docs/                             # Complete engineering documentation & ~4.5-page Final Report
+│   ├── FINAL_REPORT.md
+│   ├── ARCHITECTURE.md
+│   ├── PATH_PLANNING.md
+│   ├── CONTROLLER.md
+│   ├── SIMULATION_RESULTS.md
+│   └── MILESTONES.md
+└── UPSTREAM_ATTRIBUTION.md           # Full upstream GIU-F1Tenth provenance and MIT license attribution
+```
+
+---
+
+## Reproducible Setup & Execution Instructions
+
+### Option A — Full Native Ubuntu 22.04 LTS + ROS 2 Humble Workflow (Target Competition Environment)
+
+```bash
+# 1. Install ROS 2 Humble & F1TENTH dependencies on Ubuntu 22.04
+sudo apt update && sudo apt install -y \
+  python3-colcon-common-extensions python3-rosdep python3-pip \
+  ros-humble-ackermann-msgs ros-humble-nav2-map-server \
+  ros-humble-nav2-amcl ros-humble-nav2-lifecycle-manager \
+  ros-humble-xacro ros-humble-rviz2
+
+pip install -r requirements.txt
+pip install f110-gym==0.2.1 evo rosbags pytest flake8
+
+# 2. Build all 6 ROS 2 packages cleanly
+source /opt/ros/humble/setup.bash
+colcon build --symlink-install
+source install/setup.bash
+
+# 3. Run all 30 automated unit, lint & closed-loop integration tests
+colcon test
+colcon test-result --verbose
+
+# 4. Launch complete closed-loop autonomous driving on GIU Berlin!
+#    Choose profile:=conservative | balanced | race
+ros2 launch core berlin_full_sim.launch.py profile:=balanced
+
+# Optional emergency stop / resume from another terminal:
+ros2 topic pub --once /pause std_msgs/msg/Bool "{data: true}"
+ros2 topic pub --once /pause std_msgs/msg/Bool "{data: false}"
+```
+
+### Option B — Browser NoVNC Docker Simulation (`f1tenth_gym_ros/docker-compose.yml`)
+
+```bash
+cd f1tenth_gym_ros
+docker compose up --build -d
+# Open http://localhost:8080/vnc.html in your browser, then inside container:
+docker compose exec sim bash -c "
+  cd /arola_ws && source /opt/ros/humble/setup.bash &&
+  colcon build && source install/setup.bash &&
+  ros2 launch core berlin_full_sim.launch.py profile:=race
+"
+```
+
+### Option C — Headless Python 3.10–3.12 Container / CI Execution (No Root or `/opt/ros/humble` Needed)
+
+When `/opt/ros/humble` is not installed on the host OS (e.g., Debian 12 / CI sandboxes), `tools/ros2_sim_harness` provides an automatic zero-overhead deterministic `rclpy` + `tf2_ros` runtime executing the **exact ROS 2 node classes** directly against `f110_gym`:
+
+```bash
+# 1. Build all 6 ROS 2 packages & execute all 30 automated tests
+colcon build
+colcon test && colcon test-result --verbose
+pytest -v
+flake8 f1tenth_gym_ros src/core src/planning/simple_planner \
+  src/control/pure_pursuit src/watchdog/watchdog tools
+
+# 2. Re-run the complete 5-lap profile benchmark, 4 path modes,
+#    6-point tuning sweep, 15-run Monte Carlo test, rosbag2 & plots:
+python3 tools/run_berlin_simulation.py
+```
+
+---
+
+## Documentation Index
+
+| Document | Contents |
+| :--- | :--- |
+| [**`docs/FINAL_REPORT.md`**](docs/FINAL_REPORT.md) | Complete competition technical report (~4.5 pages): architecture, math, tuning, results, limitations & sim-to-real transfer. |
+| [**`docs/ARCHITECTURE.md`**](docs/ARCHITECTURE.md) | ROS 2 package graph, topic contracts, single-owner TF2 design, and all **10 upstream bugs fixed**. |
+| [**`docs/PATH_PLANNING.md`**](docs/PATH_PLANNING.md) | Ground-truth `600 x 600` GIU Berlin occupancy analysis, harmonic + minimum-curvature planner math & 4 validated paths. |
+| [**`docs/CONTROLLER.md`**](docs/CONTROLLER.md) | Exact Ackermann Pure Pursuit equations, forward curvature preview speed regulation & fail-safe state transitions. |
+| [**`docs/SIMULATION_RESULTS.md`**](docs/SIMULATION_RESULTS.md) | Full multi-lap tables, parameter tuning Pareto trade-offs, Monte Carlo spawn robustness & fault-injection metrics. |
+| [**`docs/MILESTONES.md`**](docs/MILESTONES.md) | Chronological Phase 1–9 engineering execution log and verified Git commits. |
+| [**`UPSTREAM_ATTRIBUTION.md`**](UPSTREAM_ATTRIBUTION.md) | Full attribution to `GIU-F1Tenth/minimal_sofware_example` and upstream MIT submodules. |
+
+---
+
+## Troubleshooting Common Issues
+
+| Symptom | Root Cause | Solution Implemented |
+| :--- | :--- | :--- |
+| Immediate wall collision at spawn `(2.2933, -17.2435)` | `berlin.png` saved as 1-bit `mode='1'` in upstream `f1tenth_maps` | Converted all Berlin map images to 8-bit `mode='L'` + auto-conversion guard in `resolve_gym_map_path()`. |
+| Vehicle sits stationary with `0.0 m/s` on `/drive` | Upstream `pure_pursuit_node` waited for physical `/joy` button press | Set `autonomous_vel_enabled: true` in simulation profiles; `/pause` provides clean software e-stop. |
+| TF tree jump / warning on `ego_racecar/base_link` | Both `gym_bridge` and `odom_to_base_link_node` published parent TFs | Added `publish_tf: false` default in ground-truth sim (`tf_parent_conflicts == []`). |
+| `ModuleNotFoundError: vesc_msgs` on `watchdog_node` | Physical VESC driver absent in pure simulation containers | Graceful `VESC_AVAILABLE` import guard while keeping active `/scan` & `/ego_racecar/odom` monitoring. |
+| `race_monitor` shows `0` laps completed | Subscribed to hardcoded `'/car_state/odom'` & non-Berlin finish line | Connected to `odometry_topics[0]` (`'/ego_racecar/odom'`) and Berlin line `[0.80, -17.25] -> [3.80, -17.25]`. |

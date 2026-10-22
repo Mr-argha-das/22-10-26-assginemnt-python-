@@ -1,0 +1,12 @@
+[tool.pytest.ini_options]
+addopts = "--import-mode=importlib"
+pythonpath = [
+    "f1tenth_gym_ros",
+    "src/core",
+    "src/planning/simple_planner",
+    "src/control/pure_pursuit",
+    "src/watchdog/watchdog",
+    "src/monitor/race_monitor",
+    "tools",
+]
+norecursedirs = ["build", "install", "log", "results", ".git"]
