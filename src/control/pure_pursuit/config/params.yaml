@@ -1,0 +1,48 @@
+pure_pursuit_node:
+  ros__parameters:
+    # Adaptive Lookahead Distance Parameters [m]
+    min_lookahead_distance: 0.80
+    max_lookahead_distance: 2.05
+    lookahead_gain: 0.28
+    use_linear_lad_interp: true
+
+    # Velocity & Curvature Regulation Parameters
+    min_velocity: 1.8
+    max_velocity: 5.0
+    vel_division_factor: 1.0
+    a_lat_max: 4.6
+    curvature_preview_m: 2.6
+    k_sigmoid: 8.0
+    skidding_velocity_thresh: 0.35
+
+    # Ackermann Steering Kinematics, Damping & Saturation
+    wheelbase: 0.3302
+    steering_gain: 1.08
+    kp: 0.0
+    kd: 0.02
+    steering_alpha: 0.72
+    max_steering_angle: 0.4189
+    max_steering_rate: 3.2
+
+    # Safety & Autonomy State
+    autonomous_vel_enabled: true
+    closed_loop_path: true
+    goal_tolerance_m: 0.35
+    odom_timeout: 0.5
+    pose_source: "tf_or_odom"
+
+    # Topic & Frame Configuration
+    cmd_vel_topic: "/drive"
+    odometry_topic: "/ego_racecar/odom"
+    joy_topic: "/joy"
+    pause_topic: "/pause"
+    path_topic: "/pp_path"
+    tf_target: "map"
+    tf_source: "ego_racecar/base_link"
+
+    # Timing & Queues
+    control_frequency: 100.0
+    tf_timeout: 0.05
+    marker_resolution: 60
+    subscriber_queue_size: 10
+    publisher_queue_size: 10
