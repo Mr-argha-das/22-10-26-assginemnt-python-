@@ -1,0 +1,64 @@
+# ==============================================================================
+# F1TENTH AROLA Physical Hardware Profile — Supervised GIU Berlin Lab Deployment
+# SAFETY NOTE: `autonomous_vel_enabled: false` enforces deadman button LB on /joy
+# ==============================================================================
+
+pure_pursuit_node:
+  ros__parameters:
+    min_lookahead_distance: 0.80
+    max_lookahead_distance: 1.60
+    use_linear_lad_interp: true
+    min_velocity: 1.0
+    max_velocity: 2.2
+    vel_division_factor: 1.0
+    a_lat_max: 2.4
+    curvature_preview_m: 2.2
+    skidding_velocity_thresh: 0.20
+    wheelbase: 0.3302
+    steering_gain: 1.00
+    kp: 0.0
+    kd: 0.02
+    steering_alpha: 0.65
+    max_steering_angle: 0.38
+    max_steering_rate: 2.8
+    autonomous_vel_enabled: false
+    closed_loop_path: true
+    odom_timeout: 0.25
+    pose_source: "tf_only"
+    cmd_vel_topic: "/drive"
+    odometry_topic: "/odom"
+    joy_topic: "/joy"
+    pause_topic: "/pause"
+    path_topic: "/pp_path"
+    tf_target: "map"
+    tf_source: "base_link"
+    control_frequency: 50.0
+    tf_timeout: 0.1
+
+simple_planner:
+  ros__parameters:
+    planner_mode: "csv"
+    csv_path: "paths/berlin_safe_centerline.csv"
+    map_yaml_path: "maps/berlin.yaml"
+    validate_against_map: true
+    speed_scale: 0.70
+    frame_id: "map"
+    publish_rate: 2.0
+    path_topic: "/pp_path"
+
+watchdog_node:
+  ros__parameters:
+    critical_voltage: 12.0
+    min_voltage: 9.0
+    max_voltage: 52.0
+    temp_warning_start: 80.0
+    temp_warning_high: 90.0
+    temp_critical: 100.0
+    lidar_timeout: 0.25
+    lidar_critical_timeout: 0.5
+    enable_camera_check: false
+    publish_pause_on_critical: true
+    pause_topic: "/pause"
+    core_topic: "/sensors/core"
+    lidar_topic: "/scan"
+    odom_topic: "/odom"

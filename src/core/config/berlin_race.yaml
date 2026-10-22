@@ -1,0 +1,65 @@
+# ==============================================================================
+# F1TENTH AROLA Tuned Fast Race Profile — GIU Berlin Time-Trial Configuration
+# ==============================================================================
+
+odom_to_base_link_node:
+  ros__parameters:
+    topics:
+      odom_topic: "/ego_racecar/odom"
+    frames:
+      map_frame: "map"
+      odom_frame: "odom"
+      base_link_frame: "ego_racecar/base_link"
+    publish_tf: false
+    publish_map_to_odom: true
+
+pure_pursuit_node:
+  ros__parameters:
+    min_lookahead_distance: 0.72
+    max_lookahead_distance: 1.85
+    lookahead_gain: 0.24
+    use_linear_lad_interp: true
+    min_velocity: 2.3
+    max_velocity: 6.5
+    vel_division_factor: 1.0
+    a_lat_max: 6.8
+    curvature_preview_m: 3.1
+    k_sigmoid: 8.0
+    skidding_velocity_thresh: 0.45
+    wheelbase: 0.3302
+    steering_gain: 1.12
+    kp: 0.0
+    kd: 0.025
+    steering_alpha: 0.76
+    max_steering_angle: 0.4189
+    max_steering_rate: 3.2
+    autonomous_vel_enabled: true
+    closed_loop_path: true
+    goal_tolerance_m: 0.35
+    odom_timeout: 0.5
+    pose_source: "tf_or_odom"
+    cmd_vel_topic: "/drive"
+    odometry_topic: "/ego_racecar/odom"
+    joy_topic: "/joy"
+    pause_topic: "/pause"
+    path_topic: "/pp_path"
+    tf_target: "map"
+    tf_source: "ego_racecar/base_link"
+    control_frequency: 100.0
+    tf_timeout: 0.05
+
+simple_planner:
+  ros__parameters:
+    planner_mode: "csv"
+    csv_path: "paths/berlin_apex_raceline.csv"
+    map_yaml_path: "maps/berlin.yaml"
+    invert: false
+    closed_loop: true
+    validate_against_map: true
+    vehicle_width_m: 0.31
+    safety_margin_m: 0.45
+    speed_scale: 1.12
+    frame_id: "map"
+    publish_rate: 2.0
+    path_topic: "/pp_path"
+    marker_topic: "/planned_path_marker"
