@@ -1,0 +1,46 @@
+rosbag2_bagfile_information:
+  compression_format: ''
+  compression_mode: ''
+  custom_data: null
+  duration:
+    nanoseconds: 82550000000
+  files:
+  - duration:
+      nanoseconds: 82550000000
+    message_count: 2066
+    path: rosbag2_berlin_race.db3
+    starting_time:
+      nanoseconds_since_epoch: 10000000
+  message_count: 2066
+  relative_file_paths:
+  - rosbag2_berlin_race.db3
+  ros_distro: rosbags
+  starting_time:
+    nanoseconds_since_epoch: 10000000
+  storage_identifier: sqlite3
+  topics_with_message_count:
+  - message_count: 1652
+    topic_metadata:
+      name: /ego_racecar/odom
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: nav_msgs/msg/Odometry
+      type_description_hash: 
+        RIHS01_3cc97dc7fb7502f8714462c526d369e35b603cfc34d946e3f2eda2766dfec6e0
+  - message_count: 413
+    topic_metadata:
+      name: /scan
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: sensor_msgs/msg/LaserScan
+      type_description_hash: 
+        RIHS01_64c191398013af96509d518dac71d5164f9382553fce5c1f8cca5be7924bd828
+  - message_count: 1
+    topic_metadata:
+      name: /pp_path
+      offered_qos_profiles: ''
+      serialization_format: cdr
+      type: nav_msgs/msg/Path
+      type_description_hash: 
+        RIHS01_1957a5bb3cee5da65c4e52e52b65a93df227efce4c20f8458b36e73066ca334b
+  version: 8

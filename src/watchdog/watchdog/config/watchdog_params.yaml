@@ -1,0 +1,38 @@
+watchdog_node:
+    ros__parameters:
+        # Voltage thresholds
+        critical_voltage: 12.0
+        min_voltage: 9.0
+        max_voltage: 52.0
+
+        # Temperature thresholds (Celsius)
+        temp_warning_start: 80.0
+        temp_warning_high: 90.0
+        temp_critical: 100.0
+
+        # Timeout settings (seconds)
+        lidar_timeout: 0.5
+        camera_timeout: 0.5
+        lidar_critical_timeout: 1.0
+
+        # Timer intervals (seconds)
+        status_publish_interval: 1.0
+        camera_check_interval: 0.5
+        critical_check_interval: 0.5
+
+        # Topic names
+        core_topic: "/sensors/core"
+        camera_topic: "/camera/camera/color/image_raw"
+        lidar_topic: "/scan"
+        odom_topic: "/odom"
+        critical_topic: "/tmp/watchdog/critical"
+        status_topic: "/watchdog/system/status"
+        camera_status_topic: "/tmp/watchdog/camera_is_live"
+
+        # QoS settings
+        subscription_qos_depth: 10
+        publisher_qos_depth: 10
+
+        # Logging settings
+        node_name: "watchdog_node"
+        log_level: "INFO" # DEBUG, INFO, WARN, ERROR, FATAL

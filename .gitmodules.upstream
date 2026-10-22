@@ -1,0 +1,12 @@
+[submodule "src/control/pure_pursuit"]
+	path = src/control/pure_pursuit
+	url = https://github.com/GIU-F1Tenth/pure_pursuit.git
+[submodule "src/watchdog/watchdog"]
+	path = src/watchdog/watchdog
+	url = https://github.com/GIU-F1Tenth/watchdog.git
+[submodule "f1tenth_gym_ros"]
+	path = f1tenth_gym_ros
+	url = https://github.com/f1tenth/f1tenth_gym_ros.git
+[submodule "src/monitor/race_monitor"]
+	path = src/monitor/race_monitor
+	url = https://github.com/GIU-F1Tenth/race_monitor.git

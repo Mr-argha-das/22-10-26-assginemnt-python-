@@ -1,0 +1,171 @@
+# ==============================================================================
+# F1TENTH AROLA Core Configuration — GIU Berlin Simulation (Balanced Default)
+# ==============================================================================
+
+odom_to_base_link_node:
+  ros__parameters:
+    topics:
+      odom_topic: "/ego_racecar/odom"
+    frames:
+      map_frame: "map"
+      odom_frame: "odom"
+      base_link_frame: "ego_racecar/base_link"
+    # Disabled by default when gym_bridge broadcasts map -> ego_racecar/base_link
+    publish_tf: false
+    publish_map_to_odom: true
+
+pure_pursuit_node:
+  ros__parameters:
+    # Speed-Adaptive Lookahead Distance [m]
+    min_lookahead_distance: 0.85
+    max_lookahead_distance: 1.95
+    lookahead_gain: 0.28
+    use_linear_lad_interp: true
+
+    # Velocity & Curvature Preview Regulation
+    min_velocity: 1.9
+    max_velocity: 4.8
+    vel_division_factor: 1.0
+    a_lat_max: 4.5
+    curvature_preview_m: 2.6
+    k_sigmoid: 8.0
+    skidding_velocity_thresh: 0.35
+
+    # Ackermann Steering Kinematics, Damping & Saturation
+    wheelbase: 0.3302
+    steering_gain: 1.08
+    kp: 0.0
+    kd: 0.02
+    steering_alpha: 0.72
+    max_steering_angle: 0.4189
+    max_steering_rate: 3.2
+
+    # Safety & Autonomy State
+    autonomous_vel_enabled: true
+    closed_loop_path: true
+    goal_tolerance_m: 0.35
+    odom_timeout: 0.5
+    pose_source: "tf_or_odom"
+
+    # Topics & Coordinate Frames
+    cmd_vel_topic: "/drive"
+    odometry_topic: "/ego_racecar/odom"
+    joy_topic: "/joy"
+    pause_topic: "/pause"
+    path_topic: "/pp_path"
+    tf_target: "map"
+    tf_source: "ego_racecar/base_link"
+
+    # Control Rate & Queues
+    control_frequency: 100.0
+    tf_timeout: 0.05
+    marker_resolution: 60
+    subscriber_queue_size: 10
+    publisher_queue_size: 10
+
+simple_planner:
+  ros__parameters:
+    planner_mode: "csv"
+    csv_path: "paths/berlin_optimal_raceline.csv"
+    map_yaml_path: "maps/berlin.yaml"
+    invert: false
+    closed_loop: true
+    validate_against_map: true
+    vehicle_width_m: 0.31
+    safety_margin_m: 0.45
+    waypoint_spacing_m: 0.20
+    v_min: 1.9
+    v_max: 4.8
+    a_lat_max: 4.5
+    speed_scale: 1.0
+    frame_id: "map"
+    publish_rate: 2.0
+    path_topic: "/pp_path"
+    marker_topic: "/planned_path_marker"
+
+amcl:
+  ros__parameters:
+    use_sim_time: false
+    alpha1: 0.2
+    alpha2: 0.2
+    alpha3: 0.2
+    alpha4: 0.2
+    alpha5: 0.2
+    base_frame_id: "ego_racecar/base_link"
+    global_frame_id: "map"
+    odom_frame_id: "odom"
+    beam_skip_distance: 0.5
+    beam_skip_error_threshold: 0.9
+    beam_skip_threshold: 0.3
+    do_beamskip: false
+    lambda_short: 0.1
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 30.0
+    laser_min_range: -1.0
+    laser_model_type: "likelihood_field"
+    max_beams: 60
+    max_particles: 2000
+    min_particles: 500
+    pf_err: 0.05
+    pf_z: 0.99
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+    resample_interval: 1
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    save_pose_rate: 0.5
+    tf_broadcast: true
+    transform_tolerance: 1.0
+    update_min_a: 0.2
+    update_min_d: 0.25
+    sigma_hit: 0.2
+    z_hit: 0.5
+    z_max: 0.05
+    z_rand: 0.5
+    z_short: 0.05
+    scan_topic: "/scan"
+
+urg_node2:
+  ros__parameters:
+    ip_address: "192.168.0.10"
+    ip_port: 10940
+    frame_id: "laser"
+    calibrate_time: false
+    synchronize_time: false
+    publish_intensity: false
+    publish_multiecho: false
+    error_limit: 4
+    error_reset_period: 5.0
+    diagnostics_tolerance: 0.05
+    diagnostics_window_time: 5.0
+    time_offset: 0.0
+    angle_min: -2.35
+    angle_max: 2.35
+    skip: 0
+    cluster: 1
+
+watchdog_node:
+  ros__parameters:
+    critical_voltage: 12.0
+    min_voltage: 9.0
+    max_voltage: 52.0
+    temp_warning_start: 80.0
+    temp_warning_high: 90.0
+    temp_critical: 100.0
+    lidar_timeout: 0.5
+    camera_timeout: 0.5
+    lidar_critical_timeout: 1.0
+    status_publish_interval: 1.0
+    camera_check_interval: 0.5
+    critical_check_interval: 0.5
+    enable_camera_check: false
+    publish_pause_on_critical: true
+    pause_topic: "/pause"
+    core_topic: "/sensors/core"
+    camera_topic: "/camera/camera/color/image_raw"
+    lidar_topic: "/scan"
+    odom_topic: "/ego_racecar/odom"
+    critical_topic: "/tmp/watchdog/critical"
+    status_topic: "/watchdog/system/status"
+    camera_status_topic: "/tmp/watchdog/camera_is_live"
+    subscription_qos_depth: 10
+    publisher_qos_depth: 10
