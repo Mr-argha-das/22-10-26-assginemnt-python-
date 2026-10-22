@@ -1,0 +1,7 @@
+simple_planner:
+  ros__parameters:
+    csv_path: ""              # Path to CSV file containing waypoints (expected format: x,y,v)
+    invert: false             # Invert the order of waypoints
+    frame_id: "map"           # Frame ID for the waypoints
+    publish_rate: 1.0         # Publish rate for the path messages
+    path_topic: "/pp_path"    # Topic to publish the planned path

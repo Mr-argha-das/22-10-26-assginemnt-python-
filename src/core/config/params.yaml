@@ -1,0 +1,202 @@
+# ==============================================================================
+# F1TENTH Core System Configuration
+# This file contains all parameters for the complete autonomous racing stack
+# ==============================================================================
+
+# ==============================================================================
+# Pure Pursuit Controller Configuration
+# Controls trajectory following and velocity commands
+
+# ==============================================================================
+# Odom to Base Link Transform Node Configuration
+# Publishes TF transforms from map to odom and odom to base_link
+# ==============================================================================
+odom_to_base_link_node:
+  ros__parameters:
+    # Topic Configuration
+    topics:
+      odom_topic: "/ego_racecar/odom"    # Odometry topic to subscribe to
+    
+    # Frame Configuration
+    frames:
+      map_frame: "map"                   # Map frame ID
+      odom_frame: "odom"                 # Odometry frame ID
+      base_link_frame: "ego_racecar/base_link"  # Base link frame ID
+
+# ==============================================================================
+# Pure Pursuit Controller Configuration
+# Controls trajectory following and velocity commands
+# ==============================================================================
+pure_pursuit_node:
+  ros__parameters:
+    # Lookahead Distance Parameters
+    max_lookahead_distance: 2.0      # Maximum lookahead distance in meters
+    min_lookahead_distance: 0.66     # Minimum lookahead distance in meters
+    
+    # Velocity Control Parameters
+    max_velocity: 4.7                 # Maximum allowed velocity in m/s
+    min_velocity: 2.2                 # Minimum allowed velocity in m/s
+    vel_division_factor: 1.0          # Factor to reduce velocity commands
+    skidding_velocity_thresh: 0.3     # Velocity threshold to prevent skidding
+    
+    # Control Parameters
+    kp: 0.45                          # Proportional gain for steering control
+    kd: 1.2                           # Derivative gain for steering control
+    k_sigmoid: 8.0                    # Sigmoid steepness for velocity control
+    
+    # Topic Names
+    cmd_vel_topic: "/drive"           # Ackermann drive command topic
+    odometry_topic: "/ego_racecar/odom"           # Odometry topic for vehicle pose
+    joy_topic: "/joy"                 # Joystick topic for manual tuning
+    pause_topic: "/pause"             # Emergency pause topic
+    path_topic: "/pp_path"            # Topic for the selected path
+    tf_target: "map"
+    tf_source: "ego_racecar/laser"
+
+    # Timer and Processing Parameters
+    control_frequency: 200.0          # Control loop frequency in Hz (1/timer_period)
+    tf_timeout: 0.5                   # Transform lookup timeout in seconds
+    marker_resolution: 60             # Circle marker resolution for visualization
+    
+    # Queue Sizes
+    subscriber_queue_size: 10         # ROS subscriber queue size
+    publisher_queue_size: 10          # ROS publisher queue size
+
+# ==============================================================================
+# LiDAR Driver Configuration (URG Node2)
+# Configures Hokuyo LiDAR sensor communication and data processing
+# ==============================================================================
+urg_node2:
+  ros__parameters:
+    ip_address: '192.168.0.10'       # LiDAR IP address
+    ip_port: 10940                   # LiDAR communication port
+    frame_id: 'laser'                # TF frame for LiDAR data
+    calibrate_time: false            # Time calibration enable/disable
+    synchronize_time: false          # Time synchronization enable/disable
+    publish_intensity: false         # Publish intensity data
+    publish_multiecho: false         # Publish multi-echo data
+    error_limit: 4                   # Maximum allowed errors before reset
+    error_reset_period: 5.0          # Error reset period in seconds
+    diagnostics_tolerance: 0.05      # Diagnostics tolerance
+    diagnostics_window_time: 5.0     # Diagnostics window time
+    time_offset: 0.0                 # Time offset for synchronization
+    angle_min: -3.14                 # Minimum scan angle (radians)
+    angle_max: 3.14                  # Maximum scan angle (radians)
+    skip: 0                          # Number of measurements to skip
+    cluster: 1                       # Clustering parameter
+
+# ==============================================================================
+# AMCL Localization Configuration
+# Adaptive Monte Carlo Localization for pose estimation
+# ==============================================================================
+amcl:
+  ros__parameters:
+    use_sim_time: false              # Use simulation time (set to false for real robot)
+    
+    # Motion Model Parameters
+    alpha1: 0.2                      # Rotation noise from rotation
+    alpha2: 0.2                      # Rotation noise from translation
+    alpha3: 0.2                      # Translation noise from translation
+    alpha4: 0.2                      # Translation noise from rotation
+    alpha5: 0.2                      # Translation noise (strafe)
+    
+    # Frame Configuration
+    base_frame_id: "ego_racecar/base_link"       # Robot base frame
+    global_frame_id: "map"           # Global coordinate frame
+    odom_frame_id: "odom"            # Odometry frame
+    
+    # Laser Model Parameters
+    beam_skip_distance: 0.5          # Distance to skip beams
+    beam_skip_error_threshold: 0.9   # Error threshold for beam skipping
+    beam_skip_threshold: 0.3         # Threshold for beam skipping
+    do_beamskip: false               # Enable beam skipping
+    lambda_short: 0.1                # Short reading probability
+    laser_likelihood_max_dist: 2.0   # Maximum distance for likelihood field
+    laser_max_range: 100.0           # Maximum laser range
+    laser_min_range: -1.0            # Minimum laser range (-1 = use laser specs)
+    laser_model_type: "likelihood_field"  # Laser model type
+    max_beams: 60                    # Maximum number of beams to use
+    
+    # Particle Filter Parameters
+    max_particles: 2000              # Maximum number of particles
+    min_particles: 500               # Minimum number of particles
+    pf_err: 0.05                     # Particle filter error threshold
+    pf_z: 0.99                       # Particle filter confidence
+    recovery_alpha_fast: 0.0         # Fast recovery alpha
+    recovery_alpha_slow: 0.0         # Slow recovery alpha
+    resample_interval: 1             # Resampling interval
+    
+    # Motion Model Type
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"  # Robot motion model
+    
+    # Update Parameters
+    save_pose_rate: 0.5              # Rate to save pose estimates
+    tf_broadcast: true               # Broadcast TF transforms
+    transform_tolerance: 1.0         # Transform tolerance
+    update_min_a: 0.2                # Minimum angular update
+    update_min_d: 0.25               # Minimum distance update
+    
+    # Likelihood Field Parameters
+    sigma_hit: 0.2                   # Standard deviation for hit distribution
+    z_hit: 0.5                       # Hit probability
+    z_max: 0.05                      # Max reading probability
+    z_rand: 0.5                      # Random reading probability
+    z_short: 0.05                    # Short reading probability
+    
+    # Topic Configuration
+    scan_topic: "/scan"              # LiDAR scan topic
+
+# ==============================================================================
+# Simple Planner Configuration
+# Waypoint-based path planning from CSV files
+# ==============================================================================
+simple_planner:
+  ros__parameters:
+    csv_path: "src/control/pure_pursuit/path/example_path.csv"                     # Path to CSV file containing waypoints (x,y,v format)
+    invert: false                    # Invert the order of waypoints
+    frame_id: "map"                  # Frame ID for the waypoints
+    publish_rate: 1.0                # Publish rate for path messages
+    path_topic: "/pp_path"           # Topic to publish the planned path
+
+# ==============================================================================
+# Watchdog Configuration
+# System monitoring and safety management
+# ==============================================================================
+watchdog_node:
+  ros__parameters:
+    # Voltage Monitoring Thresholds
+    critical_voltage: 12.0           # Critical voltage threshold (V)
+    min_voltage: 9.0                 # Minimum acceptable voltage (V)
+    max_voltage: 52.0                # Maximum acceptable voltage (V)
+
+    # Temperature Monitoring Thresholds (Celsius)
+    temp_warning_start: 80.0         # Temperature warning start threshold
+    temp_warning_high: 90.0          # High temperature warning threshold
+    temp_critical: 100.0             # Critical temperature threshold
+
+    # Timeout Settings (seconds)
+    lidar_timeout: 0.5               # LiDAR data timeout
+    camera_timeout: 0.5              # Camera data timeout
+    lidar_critical_timeout: 1.0      # Critical LiDAR timeout
+
+    # Timer Intervals (seconds)
+    status_publish_interval: 1.0     # Status publishing rate
+    camera_check_interval: 0.5       # Camera check frequency
+    critical_check_interval: 0.5     # Critical systems check frequency
+
+    # Topic Names
+    core_topic: "/sensors/core"      # Core sensor data topic
+    camera_topic: "/camera/camera/color/image_raw"  # Camera image topic
+    lidar_topic: "/scan"             # LiDAR scan topic
+    odom_topic: "/odom"              # Odometry topic
+    critical_topic: "/tmp/watchdog/critical"        # Critical status topic
+    status_topic: "/watchdog/system/status"         # System status topic
+    camera_status_topic: "/tmp/watchdog/camera_is_live"  # Camera status topic
+
+    # QoS Settings
+    subscription_qos_depth: 10       # Subscription queue depth
+    publisher_qos_depth: 10          # Publisher queue depth
+
+    # Logging Settings
+    node_name: "watchdog_node"       # Node name
+    log_level: "INFO"                # Log level (DEBUG, INFO, WARN, ERROR, FATAL)
