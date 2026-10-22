@@ -1,0 +1,47 @@
+# MIT License
+# Berlin Simulator Configuration for GIU Berlin AME RoboRacer Competition
+# Uses package-relative map resolution (works in both Docker /sim_ws and host ROS 2 Humble)
+
+bridge:
+  ros__parameters:
+    # Topics and namespaces (matches AROLA core/config/params.yaml)
+    ego_namespace: 'ego_racecar'
+    ego_scan_topic: '/scan'
+    ego_odom_topic: 'odom'
+    ego_opp_odom_topic: 'opp_odom'
+    ego_drive_topic: '/drive'
+    opp_namespace: 'opp_racecar'
+    opp_scan_topic: '/opp_scan'
+    opp_odom_topic: 'odom'
+    opp_ego_odom_topic: 'opp_odom'
+    opp_drive_topic: '/opp_drive'
+
+    # Transform configuration
+    scan_distance_to_base_link: 0.275
+    publish_map_to_base_tf: true
+
+    # Hokuyo 2D LiDAR scan parameters (270 deg FOV, 1080 beams)
+    scan_fov: 4.7
+    scan_beams: 1080
+
+    # Official GIU Berlin map (600x600 @ 0.05 m/px, origin [-11.606540, -26.520793, 0.0])
+    # Relative 'maps/berlin' resolves automatically against f1tenth_gym_ros share dir
+    map_path: 'maps/berlin'
+    map_img_ext: '.png'
+
+    # Single-vehicle time-trial mode (set num_agent: 2 for head-to-head racing)
+    num_agent: 1
+
+    # Verified drivable starting pose on the Berlin start/finish straight
+    # Wall clearance at (2.2933, -17.2435): 1.03 m left/right, heading -1.4965 rad (-85.7 deg)
+    sx: 2.2933
+    sy: -17.2435
+    stheta: -1.4965
+
+    # Opponent starting pose on Berlin straight (staggered behind ego)
+    sx1: 2.1600
+    sy1: -15.6500
+    stheta1: -1.4965
+
+    # Teleop support
+    kb_teleop: true

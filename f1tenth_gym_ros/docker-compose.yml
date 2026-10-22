@@ -1,0 +1,33 @@
+# MIT License
+# Copyright (c) 2020 Hongrui Zheng
+# Updated for GIU Berlin AROLA ROS 2 Humble Full-Stack Simulation (WS 2026)
+
+services:
+  sim:
+    image: f1tenth_gym_ros
+    build:
+      context: ./
+      dockerfile: Dockerfile.humble
+    volumes:
+      - ..:/arola_ws
+      - .:/sim_ws/src/f1tenth_gym_ros
+    environment:
+      - DISPLAY=novnc:0.0
+      - ROS_DOMAIN_ID=0
+    networks:
+      - x11
+    stdin_open: true
+    tty: true
+
+  novnc:
+    image: theasp/novnc:latest
+    environment:
+      - DISPLAY_WIDTH=1728
+      - DISPLAY_HEIGHT=972
+    ports:
+      - "8080:8080"
+    networks:
+      - x11
+
+networks:
+  x11:
